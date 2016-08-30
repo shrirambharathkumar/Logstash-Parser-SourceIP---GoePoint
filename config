@@ -1,0 +1,25 @@
+input{
+file{
+path=> "/mnt/shiny/elt_1.csv"
+start_position=>"beginning"
+    }
+     }
+filter{
+csv{
+columns =>["ipaddress"]
+}
+geoip {
+      source => "ipaddress"
+fields => ["latitude","longitude"]
+target => "geoip"
+      add_field => [ "[geoip][location]", "%{[geoip][longitude]}" ]
+      add_field => [ "[geoip][location]", "%{[geoip][latitude]}"  ]
+}
+
+ }
+output{
+elasticsearch{
+hosts=>"localhost:9200"
+index=>"logstash-elt1"
+}
+}
